@@ -1,0 +1,91 @@
+﻿@using InformationRetrievalProject.Models;
+
+@model List<ConfusionMatrix>
+
+<div class="container">
+    <div>
+        <p class="font-weight-light">
+            Switch "Okapi BM25" to change the similarity function, re-index and mesaure the performance.
+            Click "Save Results" to save the results and the history in .csv format. Then, execute <code>python create_plots.py</code>
+            in <i>./results</i> to generate the history plots.
+        </p>
+    </div>
+    <div class="my-4 d-flex justify-content-between">
+        <div class="d-inline-block">
+            <form action="SetSimilarity">
+                @if ((bool)ViewData["isOkapi"])
+                {
+                    <div class="custom-control custom-switch">
+                        <input type="hidden" name="toOkapi" value="false" />
+                        <input type="checkbox" class="custom-control-input" id="okapiSwitch" name="okapiSwitch" onchange="this.form.submit()" checked>
+                        <label class="custom-control-label" for="okapiSwitch">Okapi BM25</label>
+                    </div>
+                }
+                else
+                {
+                    <div class="custom-control custom-switch">
+                        <input type="hidden" name="toOkapi" value="true" /> <!-- checkbox value doesnt work-->
+                        <input type="checkbox" class="custom-control-input" id="okapiSwitch" name="okapiSwitch" onchange="this.form.submit()">
+                        <label class="custom-control-label" for="okapiSwitch">Okapi BM25</label>
+                    </div>
+                }
+            </form>
+        </div>
+        <div class="d-inline-block">
+            <h5>Avg Recall: @Model.Average(cm => cm.Recall)</h5>
+        </div>
+        <div class="d-inline-block">
+            <h5>Avg Precision: @Model.Average(cm => cm.Precision)</h5>
+
+        </div>
+        <div class="d-inline-block">
+            <form action="Performance">
+                <input type="hidden" name="save" value="true" />
+                <input type="submit" value="Save results" />
+            </form>
+        </div>
+    </div>
+    @for (int i = 0; i < Model.Count() / 4; i++)
+    {
+
+        <div class="row">
+            @for (int j = 0; j < 4; j++)
+            {
+                <div class="col-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6>ID: @Model[i * 4 + j].Id</h6>
+                        </div>
+                        <div class="card-body">
+                            <table class="table" style="font-size: 10px">
+                                <thead>
+                                    <tr>
+                                        <th scope="col"> </th>
+                                        <th scope="col">Relevant</th>
+                                        <th scope="col">Non relevant</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">Retrieved</th>
+                                        <th>@Model[i * 4 + j].TP</th>
+                                        <th>@Model[i * 4 + j].FP</th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Not Retrieved</th>
+                                        <th>@Model[i * 4 + j].FN</th>
+                                        <th>@Model[i * 4 + j].TN</th>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="card-footer">
+                                <h6>Recall: @Model[i * 4 + j].Recall</h6>
+                                <h6>Precision: @Model[i * 4 + j].Precision</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             }
+        </div>
+    }
+</div>

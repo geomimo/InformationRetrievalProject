@@ -1,0 +1,54 @@
+﻿@using InformationRetrievalProject.Data
+
+@model Document
+
+
+<div class="row mt-4">
+        <div class="container">
+            <div class="mb-auto">
+                <div class="d-block">
+                    <h2 class="d-inline">@Model.Title</h2>
+                </div>
+                <div class="d-flex justify-content-between my-3">
+                    <div class="d-inline">
+                        @if (Model.Author != null)
+                        {
+                           @Model.Author
+                        }
+                        else
+                        {
+                            <h6 class="font-weight-light">No author</h6>
+                        }
+                    </div>
+                    <div class="d-inline">
+                        <h6 class="font-weight-lighter">ID: @Model.Id</h6>
+                    </div>
+                </div>
+                <hr />
+                @if (Model.Content != null)
+                {
+                    <p>@Model.Content</p>
+                }
+                else
+                {
+                    <h6 class="font-weight-light">No content</h6>
+                }
+            </div>
+        </div>
+</div>
+<div class="container fixed-bottom mb-5">
+    <hr />
+    <div class="d-flex justify-content-between">
+        <div class="d-inline">
+            <a class="btn btn-secondary" asp-controller="Home" asp-action="Index">Back</a>
+        </div>
+        <div class="d-inline">
+            <form asp-controller="Home" asp-action="SearchRelevant">
+                <input type="hidden" name="id" value="@Model.Id" />
+                <input type="submit" class="btn btn-success" value="Search relevant" />
+            </form>
+        </div>
+    </div>
+
+</div>
+

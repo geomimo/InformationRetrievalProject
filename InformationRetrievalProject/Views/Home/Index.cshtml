@@ -1,0 +1,101 @@
+﻿@using InformationRetrievalProject.Data;
+@model List<Document>
+@{
+
+    ViewData["Title"] = "Home Page";
+    string searchFor = (string)ViewData["searchFor"];
+
+}
+
+<div>
+
+    <!--Search-->
+    <div class="row">
+        <div class="col-4 py-2">
+            <form asp-action="Search">
+                <div class="d-inline">
+                    <div class="form-group">
+                        <input class="w-75" type="text" name="searchPhrase" />
+                        <input type="submit" value="Search" />
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-8">
+            <p class="font-weight-light">
+                Insert phrase to search. The similarity function which used for indexing and searching is shown at the upper-right corner.
+                To change the similarity function and index again the documents, go to "Perfomance" page.
+            </p>
+        </div>
+
+    </div>
+    <div>
+        @if (searchFor != null)
+        {
+            <div class="alert alert-secondary" role="alert">
+                <b>Results for</b>: @searchFor
+            </div>
+        }
+    </div>
+
+    <!--Results-->
+    @if (Model != null)
+    {
+        <div>
+            @foreach (Document doc in Model)
+            {
+                    <div class="row my-3">
+                        <div class="col-12 border pb-2">
+                            <div class="d-flex justify-content-between">
+                                <div class="d-inline">
+                                    <h4>@Html.Raw(doc.Title)</h4>
+                                </div>
+                                <div class="d-inline float-right">
+                                    <h6 class="font-weight-lighter">ID: @doc.Id</h6>
+                                </div>
+                            </div>
+
+                            @if (doc.Content == null)
+                            {
+                                <h6 class="font-weight-light">No content</h6>
+                            }
+                            else
+                            {
+                                <i>
+                                    @Html.Raw(doc.Content)...
+                                </i>
+                            }
+                            <div class="d-flex justify-content-between mx-2">
+                                <div class="d-inline">
+                                    @if (doc.Author == null)
+                                    {
+                                        <h6 class="font-weight-light">No author</h6>
+
+                                    }
+                                    else
+                                    {
+                                        <h7>@Html.Raw(doc.Author)</h7>
+                                    }
+                                </div>
+                                <div class="d-inline-flex float-right mr-1">
+                                    <form asp-action="Index" asp-controller="Article">
+                                        <div class="d-inline col-2">
+                                            <input type="hidden" name="id" value=@doc.Id />
+                                            <input class="btn btn-secondary" type="submit" value="Read more" />
+                                        </div>
+                                    </form>
+                                    <form asp-action="SearchRelevant">
+                                        <div class="d-inline col-2">
+                                            <input type="hidden" name="id" value=@doc.Id />
+                                            <input class="btn btn-success" type="submit" value="Search relevant" />
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            }
+        </div>
+    }
+
+</div>
